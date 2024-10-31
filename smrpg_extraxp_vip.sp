@@ -24,18 +24,33 @@ public void OnPluginStart()
 // Hook function to reward VIPs on kills
 public Action OnPlayerDeath(Event event, const char[] name, bool dontBroadcast)
 {
-    int attacker = GetClientOfUserId(event.GetInt("attacker"));
-    int victim = GetClientOfUserId(event.GetInt("userid"));
+    // Get the attacker and victim IDs from the event
+    int attackerID = event.GetInt("attacker");
+    int victimID = event.GetInt("userid");
 
-    // Ensure attacker is in the game and is a VIP
-    if (!IsClientInGame(attacker) || !VIP_IsClientVIP(attacker))
+    // Debugging output
+    PrintToServer("Attacker ID: %d, Victim ID: %d", attackerID, victimID);
+
+    // Ensure attacker is in the game
+    int attacker = GetClientOfUserId(attackerID);
+    if (!IsClientInGame(attacker))
     {
+        PrintToServer("Attacker %d is not in game.", attacker); // Debugging output
+        return Plugin_Continue; // Exit if not in the game
+    }
+
+    // Ensure attacker is a VIP
+    if (!VIP_IsClientVIP(attacker))
+    {
+        PrintToServer("Client %d is not a VIP.", attacker); // Debugging output
         return Plugin_Continue; // Exit if not a VIP
     }
 
     // Ensure victim is in the game
+    int victim = GetClientOfUserId(victimID);
     if (!IsClientInGame(victim))
     {
+        PrintToServer("Victim %d is not in game.", victim); // Debugging output
         return Plugin_Continue; // Exit if not in game
     }
 
